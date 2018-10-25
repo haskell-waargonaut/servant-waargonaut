@@ -10,11 +10,15 @@ let
     then pkgs.haskellPackages
     else pkgs.haskell.packages.${compiler};
 
+  sources = {
+    waargonaut-src = import ./nix/waargonaut.nix;
+  };
+
   modifiedHaskellPackages = haskellPackages.override (old: {
     overrides = pkgs.lib.composeExtensions
       (old.overrides or (_: _: {}))
       (self: super: {
-        waargonaut = self.callPackage ../waargonaut {};
+        waargonaut = self.callPackage sources.waargonaut-src {};
       });
   });
 
