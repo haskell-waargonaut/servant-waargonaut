@@ -1,13 +1,14 @@
-{ mkDerivation, attoparsec, base, http-media, servant, stdenv
-, waargonaut, lens
+{ mkDerivation, attoparsec, base, http-media, lens, servant, stdenv
+, waargonaut, wl-pprint-annotated
 }:
 mkDerivation {
   pname = "servant-waargonaut";
   version = "0.1.0.0";
   src = ./.;
   libraryHaskellDepends = [
-    attoparsec base http-media servant waargonaut lens
+    attoparsec base http-media lens servant waargonaut
+    wl-pprint-annotated
   ];
-  license = stdenv.lib.licenses.unfree;
-  hydraPlatforms = stdenv.lib.platforms.none;
+  description = "Servant Integration for Waargonaut JSON Package";
+  license = stdenv.lib.licenses.bsd3;
 }
