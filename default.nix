@@ -14,7 +14,7 @@ let
     overrides = pkgs.lib.composeExtensions
       (old.overrides or (_: _: {}))
       (self: super: {
-        waargonaut = self.callPackage ../waargonaut { bench = false; };
+        waargonaut = self.callPackage ../waargonaut {};
       });
   });
 

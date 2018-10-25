@@ -3,17 +3,34 @@
 
 name:                servant-waargonaut
 version:             0.1.0.0
--- synopsis:
--- description:
+synopsis:            Servant Integration for Waargonaut JSON Package
+description:         Provides the types and instances necessary to utilise Waargonaut as the JSON handling library for your Servant API.
 -- license:
+-- The license under which the package is released.
+license:             BSD3
+
+-- The file containing the license text.
 license-file:        LICENCE
-author:              Sean Chalmers
-maintainer:          sclhiannan@gmail.com
--- copyright:
--- category:
+
+-- The package author(s).
+author:              QFPL @ Data61
+
+-- An email address to which users can send suggestions, bug reports, and
+-- patches.
+maintainer:          sean.chalmers@data61.csiro.au
+
+-- A copyright notice.
+copyright:           Copyright (C) 2017 Commonwealth Scientific and Industrial Research Organisation (CSIRO)
+
+category:            Web, JSON
+
 build-type:          Simple
 extra-source-files:  CHANGELOG.md
 cabal-version:       >=1.10
+
+source-repository    head
+  type:              git
+  location:          git@github.com/qfpl/servant-waargonaut.git
 
 library
   exposed-modules:     Servant.API.ContentTypes.Waargonaut
