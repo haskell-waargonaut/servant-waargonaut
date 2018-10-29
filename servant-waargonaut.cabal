@@ -36,11 +36,12 @@ library
   exposed-modules:     Servant.API.ContentTypes.Waargonaut
   -- other-modules:
   -- other-extensions:
-  build-depends:       base >=4.11 && <4.12
+  build-depends:       base >=4.8 && <4.13
                      , servant
                      , waargonaut
                      , attoparsec
                      , bytestring
+                     , semigroups
                      , text
                      , http-media
                      , lens
