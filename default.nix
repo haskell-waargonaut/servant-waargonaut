@@ -18,7 +18,7 @@ let
     overrides = pkgs.lib.composeExtensions
       (old.overrides or (_: _: {}))
       (self: super: {
-        waargonaut = self.callPackage sources.waargonaut-src {};
+        waargonaut = self.callPackage sources.waargonaut-src { inherit nixpkgs; };
       });
   });
 
