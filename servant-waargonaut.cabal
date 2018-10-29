@@ -40,6 +40,8 @@ library
                      , servant
                      , waargonaut
                      , attoparsec
+                     , bytestring
+                     , text
                      , http-media
                      , lens
                      , wl-pprint-annotated
