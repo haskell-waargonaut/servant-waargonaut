@@ -14,10 +14,12 @@ let
     waargonaut-src = import ./nix/waargonaut.nix;
   };
 
+  w-deps = import "${sources.waargonaut-src}/waargonaut-deps.nix";
+
   modifiedHaskellPackages = haskellPackages.override (old: {
     overrides = pkgs.lib.composeExtensions
       (old.overrides or (_: _: {}))
-      (self: super: {
+      (self: super: (w-deps pkgs self super) // {
         waargonaut = self.callPackage sources.waargonaut-src { inherit nixpkgs; };
       });
   });

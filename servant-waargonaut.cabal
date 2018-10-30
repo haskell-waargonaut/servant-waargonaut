@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                servant-waargonaut
-version:             0.1.0.0
+version:             0.2.0.0
 synopsis:            Servant Integration for Waargonaut JSON Package
 description:         Provides the types and instances necessary to utilise Waargonaut as the JSON handling library for your Servant API.
 -- license:
@@ -37,8 +37,9 @@ library
   -- other-modules:
   -- other-extensions:
   build-depends:       base >=4.11 && <4.12
-                     , servant
-                     , waargonaut
+                     , servant     >= 0.14.1 && < 0.15
+                     , waargonaut 
+                     , tagged
                      , attoparsec
                      , bytestring
                      , text
@@ -49,3 +50,25 @@ library
   hs-source-dirs:      src
 
   default-language:    Haskell2010
+
+test-suite saarg
+  type:                exitcode-stdio-1.0
+  main-is:             Main.hs
+  hs-source-dirs:      test
+
+  other-modules:       TestAPI
+
+  build-depends:       base >= 4.11 && < 4.13
+                     , servant-waargonaut
+                     , waargonaut
+                     , text
+                     , bytestring
+                     , servant
+                     , servant-server
+                     , wai
+                     , wai-extra
+                     , warp
+                     , hspec
+                     , hspec-wai
+                     , http-types
+                     , transformers
