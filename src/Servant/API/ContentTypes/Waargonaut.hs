@@ -3,6 +3,7 @@
 {-# LANGUAGE NoImplicitPrelude     #-}
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE ScopedTypeVariables   #-}
+-- | Integrate Waargonaut with Servant, including support for the tagged typeclass encoder/decoder functionality.
 module Servant.API.ContentTypes.Waargonaut ( WaargJSON ) where
 
 import           Control.Applicative        ((<*))
@@ -38,6 +39,23 @@ import           Waargonaut.Encode          (Encoder, simplePureEncodeNoSpaces)
 import           Waargonaut.Generic         (Tagged, JsonDecode, JsonEncode, mkDecoder,
                                              mkEncoder, proxy)
 
+-- | Replacement for 'Servant.API.ContentTypes.JSON' that will use the relevant instances from
+-- Waargonaut that are tagged with the type @t@.
+--
+-- This allows you to have separate typeclass implementations for the same type for different routes
+-- and have it be evident in the types. Without the need for creating a 'newtype' for each one.
+--
+-- Where you would use 'JSON' to use 'aeson' for encoding or decoding, you use 'WaargJSON t', with
+-- the @t@ denoting the tag type. Refer to the <https://hackage.haskell.org/package/waargonaut Waargonaut>
+-- package for more information about why this is so.
+--
+-- A hello world example:
+--
+-- >>> -- GET /hello/world
+-- >>> -- returning a JSON encoded World value
+-- >>> data MyTag = MyTag
+-- >>> type MyApi = "hello" :> "world" :> Get '[WaargJSON MyTag] World
+--
 data WaargJSON t
   deriving Typeable
 
