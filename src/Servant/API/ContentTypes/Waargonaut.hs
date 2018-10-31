@@ -6,37 +6,33 @@
 -- | Integrate Waargonaut with Servant, including support for the tagged typeclass encoder/decoder functionality.
 module Servant.API.ContentTypes.Waargonaut ( WaargJSON ) where
 
-import           Control.Applicative        ((<*))
 import           Control.Category           ((.))
 import           Control.Lens               (over, _Left)
 
-import           Prelude                    (String, show, unlines)
+import           Prelude                    (show, unlines)
 
 import qualified Data.ByteString.Lazy       as BSL
 import qualified Data.Text                  as Text
 
-import           Data.Either                (Either)
 import           Data.Function              (($))
-import           Data.Functor.Identity      (Identity)
 import           Data.Proxy                 (Proxy (..))
 import           Data.Typeable              (Typeable)
 
 import qualified Data.List.NonEmpty         as NE
 import qualified Network.HTTP.Media         as M
 
-import           Data.Attoparsec.ByteString (eitherResult, endOfInput, parse)
+import           Data.Attoparsec.ByteString (eitherResult, parse)
 
 import           Servant.API.ContentTypes   (Accept (..), MimeRender (..),
                                              MimeUnrender (..))
 
 import           Waargonaut                 (parseWaargonaut)
-import           Waargonaut.Decode          (Decoder, ppCursorHistory,
-                                             simpleDecode)
+import           Waargonaut.Decode          (ppCursorHistory, simpleDecode)
 import           Waargonaut.Decode.Error    (DecodeError (ParseFailed))
 
-import           Waargonaut.Encode          (Encoder, simplePureEncodeNoSpaces)
+import           Waargonaut.Encode          (simplePureEncodeNoSpaces)
 
-import           Waargonaut.Generic         (Tagged, JsonDecode, JsonEncode, mkDecoder,
+import           Waargonaut.Generic         (JsonDecode, JsonEncode, mkDecoder,
                                              mkEncoder, proxy)
 
 -- | Replacement for 'Servant.API.ContentTypes.JSON' that will use the relevant instances from
@@ -68,9 +64,6 @@ instance JsonDecode t a => MimeUnrender (WaargJSON t) a where
     . BSL.toStrict
 
     where
-      decoder :: JsonDecode t a => Tagged t (Decoder Identity a)
-      decoder = mkDecoder
-
       parser =
         over _Left (ParseFailed . Text.pack)
         . eitherResult
