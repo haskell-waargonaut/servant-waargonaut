@@ -6,5 +6,5 @@ let
   w-deps = import "${sources.waargonaut-src}/waargonaut-deps.nix";
 in
 (w-deps pkgs self super) // {
-  waargonaut = self.callPackage sources.waargonaut-src {};
+  waargonaut = self.callPackage (import "${sources.waargonaut-src}/waargonaut.nix") {};
 })
