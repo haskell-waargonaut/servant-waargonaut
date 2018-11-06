@@ -1,7 +1,7 @@
 {
   "url": "https://github.com/qfpl/waargonaut",
-  "rev": "239f70b3a72eede1fe232388f267e3517e02a701",
-  "date": "2018-10-30T15:25:31+10:00",
-  "sha256": "0bhsi0jj04zzffi265wi3fr53ssrya58vjdqziysqk6i5gcsdc4d",
-  "fetchSubmodules": true
+  "rev": "2b5bee35d56caa8146bffbe8c5eeb5fe0e7ba11b",
+  "date": "2018-11-06T16:28:01+10:00",
+  "sha256": "16yyxiw2c3camm0k0s6bamwcys6i6vbhmy38znf4y9n9w87ygy63",
+  "fetchSubmodules": false
 }
