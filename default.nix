@@ -1,4 +1,4 @@
-{ nixpkgs ? import <nixpkgs> {}
+{ nixpkgs ? import ./nix/nixpkgs.nix
 , compiler ? "default"
 }:
 let
@@ -10,18 +10,13 @@ let
     then pkgs.haskellPackages
     else pkgs.haskell.packages.${compiler};
 
-  sources = {
-    waargonaut-src = import ./nix/waargonaut.nix;
-  };
-
-  w-deps = import "${sources.waargonaut-src}/waargonaut-deps.nix";
+  overrides = import ./servant-waargonaut-overrides.nix;
 
   modifiedHaskellPackages = haskellPackages.override (old: {
     overrides = pkgs.lib.composeExtensions
       (old.overrides or (_: _: {}))
-      (self: super: (w-deps pkgs self super) // {
-        waargonaut = self.callPackage sources.waargonaut-src { inherit nixpkgs; };
-      });
+      (overrides pkgs)
+      ;
   });
 
   drv = modifiedHaskellPackages.callPackage ./servant-waargonaut.nix {};
