@@ -4,19 +4,13 @@
 let
   waarg         = import ./nix/waargonaut.nix;
   waarg-overlay = import "${waarg}/waargonaut-deps.nix";
-  waarg-pkg     = import "${waarg}/waargonaut.nix";
 
   pkgs = import nixpkgsPath {
     overlays = [
+      # Include waargonaut dependencies.
       waarg-overlay
-
-      (self: super: {
-        haskellPackages = super.haskellPackages.override (old: {
-          overrides = self.lib.composeExtensions (old.overrides or (_: _: {})) (hself: hsuper: {
-            waargonaut = hself.callPackage waarg-pkg {};
-          });
-        });
-      })
+      # Ensure we're using the pinned version of waargonaut.
+      (import ./servant-waargonaut-deps.nix)
     ];
   };
 
