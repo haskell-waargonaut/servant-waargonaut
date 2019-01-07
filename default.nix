@@ -1,16 +1,12 @@
-{ nixpkgsPath ? null
+{ nixpkgsPath ? (import ./nix/nixpkgs.nix)
 , compiler ? "default"
 }:
 let
-  pkgPath = if nixpkgsPath == null
-    then import ./nix/nixpkgs.nix
-    else nixpkgsPath;
-
   waarg         = import ./nix/waargonaut.nix;
   waarg-overlay = import "${waarg}/waargonaut-deps.nix";
   waarg-pkg     = import "${waarg}/waargonaut.nix";
 
-  pkgs = import pkgPath {
+  pkgs = import nixpkgsPath {
     overlays = [
       waarg-overlay
 

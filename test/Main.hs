@@ -6,6 +6,7 @@ import           Data.String              (fromString)
 import           Data.Proxy               (Proxy (..))
 
 import qualified Control.Concurrent       as C
+import qualified Data.Text.Lazy.Encoding  as TextLE
 
 import           Control.Monad            (void)
 
@@ -44,7 +45,7 @@ main = hspec . with (pure app) $ do
           W.simplePureEncodeNoSpaces (W.proxy W.mkEncoder (Proxy :: Proxy TestAARG)) testPerson
 
         postRq =
-          request methodPost "/" [("Content-Type", "application/json")] bdy
+          request methodPost "/" [("Content-Type", "application/json")] (TextLE.encodeUtf8 bdy)
       in
         postRq `shouldRespondWith` "OMG" { matchStatus = 200 }
 

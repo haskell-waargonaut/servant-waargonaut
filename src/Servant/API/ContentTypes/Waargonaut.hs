@@ -6,34 +6,36 @@
 -- | Integrate Waargonaut with Servant, including support for the tagged typeclass encoder/decoder functionality.
 module Servant.API.ContentTypes.Waargonaut ( WaargJSON ) where
 
-import           Control.Category           ((.))
-import           Control.Lens               (over, _Left)
+import           Control.Category              ((.))
+import           Control.Lens                  (over, _Left)
 
-import           Prelude                    (show, unlines)
+import           Prelude                       (show)
 
-import qualified Data.ByteString.Lazy       as BSL
-import qualified Data.Text                  as Text
+import qualified Data.ByteString.Lazy          as BSL
+import qualified Data.Text                     as Text
+import qualified Data.Text.Lazy.Encoding       as TextLE
 
-import           Data.Function              (($))
-import           Data.Proxy                 (Proxy (..))
-import           Data.Typeable              (Typeable)
+import           Data.Function                 (($))
+import           Data.Proxy                    (Proxy (..))
+import           Data.Typeable                 (Typeable)
 
-import qualified Data.List.NonEmpty         as NE
-import qualified Network.HTTP.Media         as M
+import qualified Data.List.NonEmpty            as NE
+import qualified Network.HTTP.Media            as M
 
-import           Data.Attoparsec.ByteString (eitherResult, parse)
+import           Data.Attoparsec.ByteString    (eitherResult, parse)
 
-import           Servant.API.ContentTypes   (Accept (..), MimeRender (..),
-                                             MimeUnrender (..))
+import           Servant.API.ContentTypes      (Accept (..), MimeRender (..),
+                                                MimeUnrender (..))
 
-import           Waargonaut                 (parseWaargonaut)
-import           Waargonaut.Decode          (ppCursorHistory, simpleDecode)
-import           Waargonaut.Decode.Error    (DecodeError (ParseFailed))
+import qualified Text.PrettyPrint.Annotated.WL as WL
+import           Waargonaut                    (parseWaargonaut)
+import           Waargonaut.Decode             (ppCursorHistory, simpleDecode)
+import           Waargonaut.Decode.Error       (DecodeError (ParseFailed))
 
-import           Waargonaut.Encode          (simplePureEncodeNoSpaces)
+import           Waargonaut.Encode             (simplePureEncodeNoSpaces)
 
-import           Waargonaut.Generic         (JsonDecode, JsonEncode, mkDecoder,
-                                             mkEncoder, proxy)
+import           Waargonaut.Generic            (JsonDecode, JsonEncode,
+                                                mkDecoder, mkEncoder, proxy)
 
 -- | Replacement for 'Servant.API.ContentTypes.JSON' that will use the relevant instances from
 -- Waargonaut that are tagged with the type @t@.
@@ -69,10 +71,8 @@ instance JsonDecode t a => MimeUnrender (WaargJSON t) a where
         . eitherResult
         . parse parseWaargonaut
 
-      handleErr (dErr, hist) = unlines
-        [ show dErr
-        , show $ ppCursorHistory hist
-        ]
+      handleErr (dErr, hist) = WL.display . WL.renderPrettyDefault $
+        WL.text (show dErr) WL.<##> ppCursorHistory hist
 
 instance JsonEncode t a => MimeRender (WaargJSON t) a where
-  mimeRender _ = simplePureEncodeNoSpaces (proxy mkEncoder (Proxy :: Proxy t))
+  mimeRender _ = TextLE.encodeUtf8 . simplePureEncodeNoSpaces (proxy mkEncoder (Proxy :: Proxy t))
