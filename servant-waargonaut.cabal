@@ -38,7 +38,7 @@ library
   -- other-extensions:
   build-depends:       base        >= 4.11   && < 4.13
                      , servant     >= 0.14.1 && < 0.15
-                     , waargonaut  == 0.4.*
+                     , waargonaut  == 0.5.*
                      , attoparsec
                      , bytestring
                      , text
