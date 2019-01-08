@@ -1,51 +1,38 @@
 {-# LANGUAGE OverloadedStrings #-}
-module Main (main, app') where
+module Main (main) where
 
-import           Data.String              (fromString)
+import           Data.Proxy              (Proxy (..))
 
-import           Data.Proxy               (Proxy (..))
+import qualified Data.Text.Lazy.Encoding as TextLE
 
-import qualified Control.Concurrent       as C
-import qualified Data.Text.Lazy.Encoding  as TextLE
+import qualified Data.ByteString.Lazy    as BSL
+import           Network.HTTP.Types      (StdMethod (POST), status200)
 
-import           Control.Monad            (void)
+import qualified Waargonaut.Encode       as W
+import qualified Waargonaut.Generic      as W
 
-import           Control.Exception        (bracket)
-import           Control.Monad.IO.Class   (liftIO)
+import           TestAPI                 (TestAARG, app, testPerson,
+                                          testPersonBS)
 
-import qualified Data.ByteString.Char8    as BS8
-import           Network.HTTP.Types       (methodPost)
-import qualified Network.Wai.Handler.Warp as Warp
-import qualified Network.Wai.Test         as WT
-
-import qualified Waargonaut.Encode        as W
-import qualified Waargonaut.Generic       as W
-
-import           Test.Hspec               (describe, hspec, it)
-import           Test.Hspec.Wai           (ResponseMatcher (..), get, post,
-                                           request, shouldRespondWith, with,
-                                           (<:>))
-
-import           TestAPI                  (Person, TestAARG, app, testPerson,
-                                           testPersonBS)
-
-app' :: IO ()
-app' = Warp.run 8888 app
+import           Test.Tasty              (defaultMain, testGroup)
+import           Test.Tasty.Wai          (assertBody, assertStatus',
+                                          buildRequestWithHeaders, get,
+                                          srequest, testWai)
 
 main :: IO ()
-main = hspec . with (pure app) $ do
-  describe "/GET Encodes" $
-    it "Responds with 200 and Contains a Waarg Encoded Person" $
-      get "/" `shouldRespondWith` 200 { matchBody = fromString (BS8.unpack testPersonBS) }
+main = defaultMain $ testGroup "Servant Waargonaut"
 
-  describe "/POST Decodes" $
-    it "Responds with 200 and Accepts a Waarg Decoded Person" $
-      let
-        bdy =
-          W.simplePureEncodeNoSpaces (W.proxy W.mkEncoder (Proxy :: Proxy TestAARG)) testPerson
+  [ testWai app "GET '/' - 200 and contains a Waarg Encoded Person" $ do
+      res <- get "/"
+      assertBody (BSL.fromStrict testPersonBS) res
 
-        postRq =
-          request methodPost "/" [("Content-Type", "application/json")] (TextLE.encodeUtf8 bdy)
-      in
-        postRq `shouldRespondWith` "OMG" { matchStatus = 200 }
+  , testWai app "POST '/' - 200 and accepts a Waarg Decoded Person" $ do
+      let bdy = W.simplePureEncodeNoSpaces (W.proxy W.mkEncoder (Proxy :: Proxy TestAARG)) testPerson
 
+      res <- srequest $ buildRequestWithHeaders POST "/"
+             (TextLE.encodeUtf8 bdy)
+             [("Content-Type", "application/json")]
+
+      assertBody "OMG" res
+      assertStatus' status200 res
+  ]

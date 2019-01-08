@@ -1,6 +1,6 @@
-{ mkDerivation, attoparsec, base, bytestring, hspec, hspec-wai
-, http-media, http-types, lens, servant, servant-server, stdenv
-, text, transformers, waargonaut, wai, wai-extra, warp
+{ mkDerivation, attoparsec, base, bytestring, http-media
+, http-types, lens, servant, servant-server, stdenv, tasty
+, tasty-wai, text, transformers, waargonaut, wai
 , wl-pprint-annotated
 }:
 mkDerivation {
@@ -12,8 +12,8 @@ mkDerivation {
     wl-pprint-annotated
   ];
   testHaskellDepends = [
-    base bytestring hspec hspec-wai http-types servant servant-server
-    text transformers waargonaut wai wai-extra warp
+    base bytestring http-types servant servant-server tasty tasty-wai
+    text transformers waargonaut wai
   ];
   description = "Servant Integration for Waargonaut JSON Package";
   license = stdenv.lib.licenses.bsd3;
