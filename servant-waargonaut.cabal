@@ -58,6 +58,7 @@ test-suite saarg
   type:                exitcode-stdio-1.0
   main-is:             Main.hs
   hs-source-dirs:      test
+  ghc-options:         -Wall
 
   other-modules:       TestAPI
 
@@ -69,9 +70,7 @@ test-suite saarg
                      , servant
                      , servant-server
                      , wai
-                     , wai-extra
-                     , warp
-                     , hspec
-                     , hspec-wai
+                     , tasty
+                     , tasty-wai
                      , http-types
                      , transformers

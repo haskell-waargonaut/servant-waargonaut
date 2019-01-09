@@ -27,8 +27,6 @@ import           Network.Wai                         (Application)
 
 import           Data.ByteString                     (ByteString)
 import qualified Data.Char                           as Char
-import qualified Data.List                           as List
-import           Data.Maybe                          (fromMaybe)
 import           Data.Text                           (Text)
 import qualified Data.Text                           as Text
 
@@ -39,10 +37,9 @@ import           Waargonaut.Generic                  (Generic,
                                                       Options (..), defaultOpts,
                                                       gDecoder, gEncoder)
 
-import           Debug.Trace                         (traceShowId)
 import           Servant.API.ContentTypes.Waargonaut (WaargJSON)
 
-data TestAARG = TestAARG
+data TestAARG
 
 data Person = Person
   { _personName                    :: Text
