@@ -1,24 +1,23 @@
-{ nixpkgs ? import ./nix/nixpkgs.nix
+{ nixpkgsPath ? (import ./nix/nixpkgs.nix)
 , compiler ? "default"
 }:
 let
-  # Can't use overlays as there is a infinite recursion in the list of
-  # dependencies that needs to be fixed first.
-  inherit (nixpkgs) pkgs;
+  waarg         = import ./nix/waargonaut.nix;
+  waarg-overlay = import "${waarg}/waargonaut-deps.nix";
+
+  pkgs = import nixpkgsPath {
+    overlays = [
+      # Include waargonaut dependencies.
+      waarg-overlay
+      # Ensure we're using the pinned version of waargonaut.
+      (import ./servant-waargonaut-deps.nix)
+    ];
+  };
 
   haskellPackages = if compiler == "default"
     then pkgs.haskellPackages
     else pkgs.haskell.packages.${compiler};
 
-  overrides = import ./servant-waargonaut-overrides.nix;
-
-  modifiedHaskellPackages = haskellPackages.override (old: {
-    overrides = pkgs.lib.composeExtensions
-      (old.overrides or (_: _: {}))
-      (overrides pkgs)
-      ;
-  });
-
-  drv = modifiedHaskellPackages.callPackage ./servant-waargonaut.nix {};
+  drv = haskellPackages.callPackage ./servant-waargonaut.nix {};
 in
   drv

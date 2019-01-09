@@ -2,7 +2,7 @@
 -- documentation, see http://haskell.org/cabal/users-guide/
 
 name:                servant-waargonaut
-version:             0.4.0.0
+version:             0.5.0.0
 synopsis:            Servant Integration for Waargonaut JSON Package
 description:         Provides the types and instances necessary to utilise Waargonaut as the JSON handling library for your Servant API.
 -- license:
@@ -38,7 +38,7 @@ library
   -- other-extensions:
   build-depends:       base        >= 4.11   && < 4.13
                      , servant     >= 0.14.1 && < 0.15
-                     , waargonaut  == 0.4.*
+                     , waargonaut  == 0.5.*
                      , attoparsec
                      , bytestring
                      , text
