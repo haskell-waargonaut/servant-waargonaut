@@ -5,7 +5,7 @@
 }:
 mkDerivation {
   pname = "servant-waargonaut";
-  version = "0.5.0.0";
+  version = "0.5.0.1";
   src = ./.;
   libraryHaskellDepends = [
     attoparsec base bytestring http-media lens servant text waargonaut
