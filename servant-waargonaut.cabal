@@ -41,7 +41,7 @@ library
   exposed-modules:     Servant.API.ContentTypes.Waargonaut
   -- other-modules:
   -- other-extensions:
-  build-depends:       base                >= 4.11   && < 4.13
+  build-depends:       base                >= 4.9   && < 4.13
                      , servant             >= 0.14.1 && < 0.16
                      , waargonaut          >= 0.5    && < 0.6
                      , attoparsec
@@ -67,7 +67,7 @@ test-suite saarg
 
   other-modules:       TestAPI
 
-  build-depends:       base >= 4.11 && < 4.13
+  build-depends:       base >= 4.9 && < 4.13
                      , servant-waargonaut
                      , servant-server
                      , servant             >= 0.14.1 && < 0.16
