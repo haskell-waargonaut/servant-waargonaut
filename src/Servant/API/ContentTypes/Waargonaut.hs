@@ -7,14 +7,10 @@
 module Servant.API.ContentTypes.Waargonaut ( WaargJSON ) where
 
 import           Control.Category              ((.))
-import           Control.Lens                  (over, _Left)
 
 import           Prelude                       (show)
 
-import qualified Data.ByteString.Lazy          as BSL
-import qualified Data.Text                     as Text
-import qualified Data.Text.Lazy.Encoding       as TextLE
-
+import           Data.Bifunctor                (first)
 import           Data.Function                 (($))
 import           Data.Proxy                    (Proxy (..))
 import           Data.Typeable                 (Typeable)
@@ -22,20 +18,20 @@ import           Data.Typeable                 (Typeable)
 import qualified Data.List.NonEmpty            as NE
 import qualified Network.HTTP.Media            as M
 
-import           Data.Attoparsec.ByteString    (eitherResult, parse)
-
 import           Servant.API.ContentTypes      (Accept (..), MimeRender (..),
                                                 MimeUnrender (..))
 
+import qualified Data.ByteString.Lazy          as BL
+
 import qualified Text.PrettyPrint.Annotated.WL as WL
-import           Waargonaut                    (parseWaargonaut)
-import           Waargonaut.Decode             (ppCursorHistory, simpleDecode)
-import           Waargonaut.Decode.Error       (DecodeError (ParseFailed))
 
-import           Waargonaut.Encode             (simplePureEncodeNoSpaces)
+import           Waargonaut.Attoparsec         (pureDecodeAttoparsecByteString)
 
-import           Waargonaut.Generic            (JsonDecode, JsonEncode,
-                                                mkDecoder, mkEncoder, proxy)
+import qualified Waargonaut.Decode             as D
+import qualified Waargonaut.Encode             as E
+
+import           Waargonaut.Generic            (JsonDecode, JsonEncode)
+import qualified Waargonaut.Generic            as G
 
 -- | Replacement for 'Servant.API.ContentTypes.JSON' that will use the relevant instances from
 -- Waargonaut that are tagged with the type @t@.
@@ -61,18 +57,12 @@ instance Accept (WaargJSON t) where
   contentTypes _ = "application" M.// "json" M./: ("charset", "utf-8") NE.:| [ "application" M.// "json" ]
 
 instance JsonDecode t a => MimeUnrender (WaargJSON t) a where
-  mimeUnrender _ = over _Left handleErr
-    . simpleDecode (proxy mkDecoder (Proxy :: Proxy t)) parser
-    . BSL.toStrict
-
+  mimeUnrender _ = first handleErr
+    . pureDecodeAttoparsecByteString (G.proxy G.mkDecoder (Proxy :: Proxy t))
+    . BL.toStrict
     where
-      parser =
-        over _Left (ParseFailed . Text.pack)
-        . eitherResult
-        . parse parseWaargonaut
-
       handleErr (dErr, hist) = WL.display . WL.renderPrettyDefault $
-        WL.text (show dErr) WL.<##> ppCursorHistory hist
+        WL.text (show dErr) WL.<##> D.ppCursorHistory hist
 
 instance JsonEncode t a => MimeRender (WaargJSON t) a where
-  mimeRender _ = TextLE.encodeUtf8 . simplePureEncodeNoSpaces (proxy mkEncoder (Proxy :: Proxy t))
+  mimeRender _ = E.simplePureEncodeByteStringNoSpaces (G.proxy G.mkEncoder (Proxy :: Proxy t))
