@@ -27,7 +27,7 @@ main = defaultMain $ testGroup "Servant Waargonaut"
       assertBody (BSL.fromStrict testPersonBS) res
 
   , testWai app "POST '/' - 200 and accepts a Waarg Decoded Person" $ do
-      let bdy = W.simplePureEncodeNoSpaces (W.proxy W.mkEncoder (Proxy :: Proxy TestAARG)) testPerson
+      let bdy = W.simplePureEncodeTextNoSpaces (W.proxy W.mkEncoder (Proxy :: Proxy TestAARG)) testPerson
 
       res <- srequest $ buildRequestWithHeaders POST "/"
              (TextLE.encodeUtf8 bdy)
