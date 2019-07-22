@@ -6,6 +6,7 @@ let
   waarg-overlay = import "${waarg}/waargonaut-deps.nix";
 
   pkgs = import nixpkgsPath {
+    config.allowBroken = true;
     overlays = [
       # Include waargonaut dependencies.
       waarg-overlay
