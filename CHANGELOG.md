@@ -1,5 +1,9 @@
 # Revision history for servant-waargonaut
 
+## Unreleased
+
+* Bump servant bounds to allow 0.17
+
 ## 0.5.0.0 -- 2019-01-08
 
 * Bump waargonaut to version 0.5.2.1
